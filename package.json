@@ -1,0 +1,43 @@
+{
+  "name": "nuro",
+  "version": "1.0.0",
+  "description": "Library for usage different neurin networks and combine them",
+  "main": "dist/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "@types/mathjs": "0.0.38",
+    "bignumber.js": "^6.0.0",
+    "chai": "^4.1.2",
+    "decimal": "0.0.2",
+    "lodash": "^4.17.5",
+    "maconf": "^1.0.0",
+    "mathjs": "^4.0.1",
+    "mocha": "^5.0.5"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.106",
+    "@types/node": "^9.6.0"
+  },
+  "scripts": {
+    "test": "node node_modules/mocha/bin/_mocha --recursive ./tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gr3w2/nuro.git"
+  },
+  "keywords": [
+    "neron",
+    "neuro",
+    "nuro",
+    "network",
+    "ai"
+  ],
+  "author": "Artem Kanaki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gr3w2/nuro/issues"
+  },
+  "homepage": "https://github.com/gr3w2/nuro#readme"
+}
