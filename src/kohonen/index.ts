@@ -23,31 +23,39 @@ export class Kohonen<T extends object> {
   private _delta: number = -0.05;
   private _iterations: number;
 
+  /** Configures how fast neural network will learn. value should be less or equal to 1 and bigger than 0 */
   public get speed() {
     return this._speed;
   }
+  /** Configures how fast neural network will learn. value should be less or equal to 1 and bigger than 0 */
   public set speed(value) {
     this._speed = value;
   }
 
+  /** Configures how much will decrease in the next iteration. value should be less than 0 */
   public get delta() {
     return this._delta;
   }
+  /** Configures how much will decrease in the next iteration. value should be less than 0 */
   public set delta(value) {
     this._delta = value;
   }
 
+  /** Configures how many iterations will be when learning will be started */
   public get iterations() {
     return this._iterations;
   }
+  /** Configures how many iterations will be when learning will be started */
   public set iterations(value) {
     this._iterations = value;
   }
 
+  /** Returns data which was set on `setData` call. */
   public get data() {
     return this._data;
   }
 
+  /** Returns prepared clusters (normalized). */
   public get clusters() {
     return this._clusters;
   }
@@ -66,6 +74,7 @@ export class Kohonen<T extends object> {
     this.minMaxHelper = new MinMax();
   }
 
+  /** Sets data which will be clusterized */
   public setData(value: T[]) {
     if (!(value instanceof Array)) {
       throw new InvalidInputData('argument `value` should be instance of Array');
@@ -77,6 +86,7 @@ export class Kohonen<T extends object> {
     this._normalized = this._data.map(item => this.normalizeHelper.normalizeObject<T>(item, this._minMax));
   }
 
+  /** Preparing clusters */
   public learn(range): T[] {
     do {
       this.buildClusters(range);
@@ -88,6 +98,7 @@ export class Kohonen<T extends object> {
     return this._clusters;
   }
 
+  /** Returns closest cluster to specified item */
   public clusterify(item: T) {
     if (!this.clusters.length) {
       throw new UnexpectedWorkFlow('Clusters are not prepared yet');
@@ -96,6 +107,7 @@ export class Kohonen<T extends object> {
     return this.getClosestCluster(normalized);
   }
 
+  /** Sets clusters (input data should not be denormalized, this operation will be done automatically) */
   public setClusterStructure(structure: T[]): T[] {
     if (!this._minMax) {
       throw new UnexpectedWorkFlow('First of all you should fill `data` field');
@@ -104,6 +116,7 @@ export class Kohonen<T extends object> {
     return this._clusters;
   }
 
+  /** Returns prepared clusters (denormalized). */
   public getDenormalizedClusters() {
     return this._clusters.map(cluster => this.denormalizeHelper.denormalizeObject(cluster, this._minMax));
   }
