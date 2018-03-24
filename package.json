@@ -1,7 +1,7 @@
 {
   "name": "nuro",
   "version": "1.0.0",
-  "description": "Library for usage different neurin networks and combine them",
+  "description": "Library for usage different neuron networks and combine them",
   "main": "dist/index.js",
   "directories": {
     "lib": "lib"
