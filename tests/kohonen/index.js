@@ -1,13 +1,8 @@
 const assert = require('chai').assert;
 
-class Data {
-  constructor(data) {
-    this.age = data.age;
-    this.salary = data.salary;
-  }
-}
-const data = require('./data').map(d => new Data(d));
+const data = require('./data');
 const Kohonen = require('../../dist/kohonen').Kohonen;
+const exceptions = require('../../dist/exceptions');
 
 
 describe('Kohonen', () => {
@@ -65,5 +60,47 @@ describe('Kohonen', () => {
     assert.equal(denormalized.length, 2);
     denormalized = denormalized.sort();
     assert.deepEqual(clusters, denormalized);
+  });
+
+  describe('Wrong usage', () => {
+    it('If argument of method `setData` is not an Array, then exception should be thrown', () => {
+      const kohonen = new Kohonen();
+      try {
+        kohonen.setData({});
+        assert.ok(null, '`setData` does not throw the exception');
+      } catch (ex) {
+        assert.instanceOf(ex, exceptions.InvalidInputData);
+      }
+    });
+
+    it('If argument of method `setData` is an empty array, then exception should be thrown', () => {
+      const kohonen = new Kohonen();
+      try {
+        kohonen.setData([]);
+        assert.ok(null, '`setData` does not throw the exception');
+      } catch (ex) {
+        assert.instanceOf(ex, exceptions.InvalidInputData);
+      }
+    });
+
+    it('If user call `learn` method and does not set data, then exception should be thrown', () => {
+      const kohonen = new Kohonen();
+      try {
+        kohonen.learn(.5);
+        assert.ok(null, '`setData` does not throw the exception');
+      } catch (ex) {
+        assert.instanceOf(ex, exceptions.InputDataExpected);
+      }
+    });
+
+    it('If user call `learn` method and does not set data, then exception should be thrown', () => {
+      const kohonen = new Kohonen();
+      try {
+        kohonen.learn(.5);
+        assert.ok(null, '`setData` does not throw the exception');
+      } catch (ex) {
+        assert.instanceOf(ex, exceptions.InputDataExpected);
+      }
+    });
   });
 });

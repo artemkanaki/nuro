@@ -51,11 +51,13 @@ class Kohonen {
         return this._clusters;
     }
     setData(value) {
+        if (!(value instanceof Array)) {
+            throw new exceptions_1.InvalidInputData('argument `value` should be instance of Array');
+        }
+        else if (!value.length) {
+            throw new exceptions_1.InvalidInputData('argument `value` should has at least one element');
+        }
         this._data = this.cloneHelper.deepClone(value);
-        const isExtended = !!Object.keys(this._data[0]).find(key => {
-            const extended = !!this._data.find(item => lodash_1.get(item, key) < 0);
-            return extended;
-        });
         this._minMax = this.minMaxHelper.getMinMaxConfig(this.data);
         this._normalized = this._data.map(item => this.normalizeHelper.normalizeObject(item, this._minMax));
     }
@@ -63,9 +65,28 @@ class Kohonen {
         do {
             this.buildClusters(range);
             this.speed = math.chain(this.speed).add(this.delta).done();
-            this.iterations--;
+            if (this.iterations) {
+                this.iterations--;
+            }
         } while (this.speed > 0 && (this.iterations || this.iterations > 0));
         return this._clusters;
+    }
+    clusterify(item) {
+        if (!this.clusters.length) {
+            throw new exceptions_1.UnexpectedWorkFlow('Clusters are not prepared yet');
+        }
+        const normalized = this.normalizeHelper.normalizeObject(item, this._minMax);
+        return this.getClosestCluster(normalized);
+    }
+    setClusterStructure(structure) {
+        if (!this._minMax) {
+            throw new exceptions_1.UnexpectedWorkFlow('First of all you should fill `data` field');
+        }
+        this._clusters = structure.map(cluster => this.normalizeHelper.normalizeObject(cluster, this._minMax));
+        return this._clusters;
+    }
+    getDenormalizedClusters() {
+        return this._clusters.map(cluster => this.denormalizeHelper.denormalizeObject(cluster, this._minMax));
     }
     buildClusters(range) {
         if (!this._normalized.length) {
@@ -81,10 +102,6 @@ class Kohonen {
             }
         });
         return this._clusters;
-    }
-    clusterify(item) {
-        const normalized = this.normalizeHelper.normalizeObject(item, this._minMax);
-        return this.getClosestCluster(normalized);
     }
     getClosestCluster(item, range) {
         let closestDistance;
@@ -114,16 +131,6 @@ class Kohonen {
             lodash_1.set(cluster, key, recalculated);
         });
         return cluster;
-    }
-    setClusterStructure(structure) {
-        if (!this._minMax) {
-            throw new exceptions_1.UnexpectedWorkFlow('First of all you should fill `data` field');
-        }
-        this._clusters = structure.map(cluster => this.normalizeHelper.normalizeObject(cluster, this._minMax));
-        return this._clusters;
-    }
-    getDenormalizedClusters() {
-        return this._clusters.map(cluster => this.denormalizeHelper.denormalizeObject(cluster, this._minMax));
     }
 }
 exports.Kohonen = Kohonen;

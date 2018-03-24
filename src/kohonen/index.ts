@@ -1,7 +1,7 @@
 import Euclidean from '../formulas/euclidean';
 import Denormalize from '../formulas/denormalize';
 import Normalize from '../formulas/normalize';
-import { InputDataExpected, UnexpectedWorkFlow } from '../exceptions';
+import { InputDataExpected, UnexpectedWorkFlow, InvalidInputData } from '../exceptions';
 import Clone from '../helpers/clone';
 import { get, set } from 'lodash';
 import MinMax from '../formulas/min-max';
@@ -67,11 +67,12 @@ export class Kohonen<T extends object> {
   }
 
   public setData(value: T[]) {
+    if (!(value instanceof Array)) {
+      throw new InvalidInputData('argument `value` should be instance of Array');
+    } else if (!value.length) {
+      throw new InvalidInputData('argument `value` should has at least one element')
+    }
     this._data = this.cloneHelper.deepClone(value);
-    const isExtended = !!Object.keys(this._data[0]).find(key => {
-      const extended = !!this._data.find(item => get(item, key) < 0);
-      return extended;
-    });
     this._minMax = this.minMaxHelper.getMinMaxConfig<T>(this.data);
     this._normalized = this._data.map(item => this.normalizeHelper.normalizeObject<T>(item, this._minMax));
   }
@@ -80,12 +81,34 @@ export class Kohonen<T extends object> {
     do {
       this.buildClusters(range);
       this.speed = math.chain(this.speed).add(this.delta).done();
-      this.iterations--;
+      if (this.iterations) {
+        this.iterations--;
+      }
     } while (this.speed > 0 && (this.iterations || this.iterations > 0))
     return this._clusters;
   }
 
-  public buildClusters(range: number): T[] {
+  public clusterify(item: T) {
+    if (!this.clusters.length) {
+      throw new UnexpectedWorkFlow('Clusters are not prepared yet');
+    }
+    const normalized = this.normalizeHelper.normalizeObject(item, this._minMax);
+    return this.getClosestCluster(normalized);
+  }
+
+  public setClusterStructure(structure: T[]): T[] {
+    if (!this._minMax) {
+      throw new UnexpectedWorkFlow('First of all you should fill `data` field');
+    }
+    this._clusters = structure.map(cluster => this.normalizeHelper.normalizeObject(cluster, this._minMax));
+    return this._clusters;
+  }
+
+  public getDenormalizedClusters() {
+    return this._clusters.map(cluster => this.denormalizeHelper.denormalizeObject(cluster, this._minMax));
+  }
+
+  private buildClusters(range: number): T[] {
     if (!this._normalized.length) {
       throw new InputDataExpected('First of all you should fill `data` field')
     }
@@ -98,11 +121,6 @@ export class Kohonen<T extends object> {
       }
     });
     return this._clusters;
-  }
-
-  public clusterify(item: T) {
-    const normalized = this.normalizeHelper.normalizeObject(item, this._minMax);
-    return this.getClosestCluster(normalized);
   }
 
   /**
@@ -145,17 +163,5 @@ export class Kohonen<T extends object> {
       set(cluster, key, recalculated);
     });
     return cluster;
-  }
-
-  public setClusterStructure(structure: T[]): T[] {
-    if (!this._minMax) {
-      throw new UnexpectedWorkFlow('First of all you should fill `data` field');
-    }
-    this._clusters = structure.map(cluster => this.normalizeHelper.normalizeObject(cluster, this._minMax));
-    return this._clusters;
-  }
-
-  public getDenormalizedClusters() {
-    return this._clusters.map(cluster => this.denormalizeHelper.denormalizeObject(cluster, this._minMax));
   }
 }
