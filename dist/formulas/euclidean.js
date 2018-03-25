@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const exceptions_1 = require("../exceptions");
 const math = require("mathjs");
-class Euclidean {
+class EuclideanHelper {
     getEuclideanDistance(from, to) {
         const coordinatesName = Object.keys(from);
         const invalidCoordinates = Object.keys(to).filter(key => !coordinatesName.includes(key));
@@ -23,6 +23,17 @@ class Euclidean {
             .sqrt()
             .done();
     }
+    getEuclideanDistanceFromArray(from, to) {
+        let total = math.chain(0);
+        for (let index = 0; index < from.length; index++) {
+            total = total.add(math
+                .chain(from[index])
+                .subtract(to[index])
+                .pow(2)
+                .done());
+        }
+        return total.sqrt().done();
+    }
 }
-exports.default = Euclidean;
+exports.EuclideanHelper = EuclideanHelper;
 //# sourceMappingURL=euclidean.js.map

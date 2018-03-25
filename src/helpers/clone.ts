@@ -1,4 +1,4 @@
-export default class Clone {
+export class CloneHelper {
   public deepClone(obj) {
     let clone;
     if (this.isValidObject(obj)) {
@@ -11,7 +11,6 @@ export default class Clone {
       clone = [];
       obj.forEach(item => clone.push(this.deepClone(item)));
     } else {
-      console.warn('Input object has invalid type');
       clone = obj;
     }
     return clone;

@@ -1,16 +1,16 @@
 const assert = require('chai').assert;
 
 const data = require('./data');
-const Kohonen = require('../../dist/kohonen').Kohonen;
+const { Kohonen } = require('../../dist/kohonen');
 const exceptions = require('../../dist/exceptions');
-
 
 describe('Kohonen', () => {
   it('Learning should work', () => {
     const kohonen = new Kohonen();
     kohonen.setData(data);
     kohonen.iterations = 1;
-    kohonen.learn(0.5);
+    kohonen.range = .5;
+    kohonen.learn();
     assert.ok(kohonen.clusters.length);
     assert.equal(kohonen.clusters.length, 3);
   });
@@ -19,13 +19,14 @@ describe('Kohonen', () => {
     const kohonen = new Kohonen();
     kohonen.setData(data);
     kohonen.iterations = 1;
-    kohonen.learn(0.5);
+    kohonen.range = .5
+    kohonen.learn();
 
-    const dataToClusterify = { age: 25, salary: 500 }
+    const dataToClusterify = [25, 500];
     const cluster = kohonen.clusterify(dataToClusterify);
     assert.ok(cluster);
-    assert.ok(cluster.age);
-    assert.ok(cluster.salary);
+    assert.ok(cluster[0]);
+    assert.ok(cluster[1]);
   });
 
   it('Clusterization alg should work after setting cluster structure', () => {
@@ -33,16 +34,16 @@ describe('Kohonen', () => {
     kohonen.setData(data);
 
     const clusters = [
-      { age: 32, salary: 5200 },
-      { age: 20, salary: 1000 }
+      [ 32, 5200 ],
+      [ 20, 1000 ]
     ];
     kohonen.setClusterStructure(clusters);
 
-    const dataToClusterify = { age: 30, salary: 0 }
+    const dataToClusterify = [ 30, 0 ]
     const cluster = kohonen.clusterify(dataToClusterify);
-    assert.isObject(cluster);
-    assert.equal(cluster.salary, 0);
-    assert.equal(cluster.salary, 0);
+    assert.isArray(cluster);
+    assert.equal(cluster[0], 0);
+    assert.equal(cluster[1], 0);
   });
 
   it('Clusters\' denormalize alg should work', () => {
@@ -50,8 +51,8 @@ describe('Kohonen', () => {
     kohonen.setData(data);
 
     const clusters = [
-      { age: 32, salary: 5200 },
-      { age: 20, salary: 1000 }
+      [ 32, 5200 ],
+      [ 20, 1000 ]
     ].sort();
     kohonen.setClusterStructure(clusters);
     let denormalized = kohonen.getDenormalizedClusters();
@@ -85,18 +86,9 @@ describe('Kohonen', () => {
 
     it('If user call `learn` method and does not set data, then exception should be thrown', () => {
       const kohonen = new Kohonen();
+      kohonen.range = .5;
       try {
-        kohonen.learn(.5);
-        assert.ok(null, '`setData` does not throw the exception');
-      } catch (ex) {
-        assert.instanceOf(ex, exceptions.InputDataExpected);
-      }
-    });
-
-    it('If user call `learn` method and does not set data, then exception should be thrown', () => {
-      const kohonen = new Kohonen();
-      try {
-        kohonen.learn(.5);
+        kohonen.learn();
         assert.ok(null, '`setData` does not throw the exception');
       } catch (ex) {
         assert.instanceOf(ex, exceptions.InputDataExpected);

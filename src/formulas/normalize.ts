@@ -1,7 +1,7 @@
 import { set, get } from 'lodash';
 import * as math from 'mathjs';
 
-export default class Normalize {
+export class NormalizeHelper {
   private _round: number = 10;
 
   public standard(min: number, max: number, target: number): number {
@@ -37,5 +37,16 @@ export default class Normalize {
       set(normalized, key, normalize.call(this, min, max, value));
     });
     return normalized;
+  }
+
+  public normalizeArray(target: number[], minMax: [number, number][]): number[] {
+    const denormalized = [];
+    target.forEach((value, index) => {
+      const min = minMax[index][0];
+      const max = minMax[index][1];
+      const denormalize = min < 0 ? this.extended : this.standard;
+      denormalized[index] = denormalize.call(this, min, max, value);
+    });
+    return denormalized;
   }
 }

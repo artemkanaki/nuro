@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = require("lodash");
 const exceptions_1 = require("../exceptions");
-class MinMax {
+class MinMaxHelper {
     getMinMaxConfig(data) {
         const minMax = {};
         if (!(data instanceof Array)) {
@@ -14,6 +14,19 @@ class MinMax {
         });
         return minMax;
     }
+    getMinMaxFromArray(data) {
+        const minMax = [];
+        if (!(data instanceof Array)) {
+            throw new exceptions_1.InvalidInputData('`data` should be an array of number arrays');
+        }
+        for (let index = 0; index < data[0].length; index++) {
+            minMax[index] = [
+                lodash_1.minBy(data, item => item[index])[index],
+                lodash_1.maxBy(data, item => item[index])[index],
+            ];
+        }
+        return minMax;
+    }
 }
-exports.default = MinMax;
+exports.MinMaxHelper = MinMaxHelper;
 //# sourceMappingURL=min-max.js.map

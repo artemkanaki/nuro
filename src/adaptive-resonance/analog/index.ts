@@ -1,6 +1,6 @@
-import Clone from '../../helpers/clone';
-import Normalize from '../../formulas/normalize';
-import Denormalize from '../../formulas/denormalize';
+import { CloneHelper } from '../../helpers/clone';
+import { NormalizeHelper } from '../../formulas/normalize';
+import { DenormalizeHelper } from '../../formulas/denormalize';
 import { IAdaptiveResonance, Cluster, InputItem } from '../interfaces/adaptive-resonance';
 
 export class AnalogAdaptiveResonance {
@@ -14,9 +14,9 @@ export class AnalogAdaptiveResonance {
     this._range = val;
   }
 
-  private cloneHelper: Clone = new Clone();
-  private normalizeHelper: Normalize = new Normalize();
-  private denormalizeHelper: Denormalize = new Denormalize();
+  private cloneHelper: CloneHelper = new CloneHelper();
+  private normalizeHelper: NormalizeHelper = new NormalizeHelper();
+  private denormalizeHelper: DenormalizeHelper = new DenormalizeHelper();
 
   // public learn(data: InputItem[]) {
   //   const dataClone = data.map(item => this.nor)

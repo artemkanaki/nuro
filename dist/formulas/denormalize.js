@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = require("lodash");
 const mathjs_1 = require("mathjs");
-class Denormalize {
+class DenormalizeHelper {
     standard(min, max, target) {
         return mathjs_1.chain(max)
             .subtract(min)
@@ -29,6 +29,16 @@ class Denormalize {
         });
         return denormalized;
     }
+    denormalizeArray(target, minMax) {
+        const denormalized = [];
+        target.forEach((value, index) => {
+            const min = minMax[index][0];
+            const max = minMax[index][1];
+            const denormalize = min < 0 ? this.extended : this.standard;
+            denormalized[index] = denormalize.call(this, min, max, value);
+        });
+        return denormalized;
+    }
 }
-exports.default = Denormalize;
+exports.DenormalizeHelper = DenormalizeHelper;
 //# sourceMappingURL=denormalize.js.map

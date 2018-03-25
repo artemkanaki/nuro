@@ -1,7 +1,7 @@
 import { InvalidInputData } from '../exceptions';
 import * as math from 'mathjs';
 
-export default class Euclidean {
+export class EuclideanHelper {
   getEuclideanDistance(from: object, to: object): number {
     const coordinatesName = Object.keys(from);
     const invalidCoordinates = Object.keys(to).filter(key => !coordinatesName.includes(key));
@@ -25,5 +25,19 @@ export default class Euclidean {
       }, math.chain(0))
       .sqrt()
       .done();
+  }
+
+  getEuclideanDistanceFromArray(from: number[], to: number[]): number {
+    let total = math.chain(0);
+    for (let index = 0; index < from.length; index++) {
+      total = total.add(
+        math
+          .chain(from[index])
+          .subtract(to[index])
+          .pow(2)
+          .done()
+      );
+    }
+    return total.sqrt().done();
   }
 }

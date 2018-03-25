@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = require("lodash");
 const math = require("mathjs");
-class Normalize {
+class NormalizeHelper {
     constructor() {
         this._round = 10;
     }
@@ -34,6 +34,16 @@ class Normalize {
         });
         return normalized;
     }
+    normalizeArray(target, minMax) {
+        const denormalized = [];
+        target.forEach((value, index) => {
+            const min = minMax[index][0];
+            const max = minMax[index][1];
+            const denormalize = min < 0 ? this.extended : this.standard;
+            denormalized[index] = denormalize.call(this, min, max, value);
+        });
+        return denormalized;
+    }
 }
-exports.default = Normalize;
+exports.NormalizeHelper = NormalizeHelper;
 //# sourceMappingURL=normalize.js.map

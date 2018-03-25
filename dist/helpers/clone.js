@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class Clone {
+class CloneHelper {
     deepClone(obj) {
         let clone;
         if (this.isValidObject(obj)) {
@@ -17,7 +17,6 @@ class Clone {
             obj.forEach(item => clone.push(this.deepClone(item)));
         }
         else {
-            console.warn('Input object has invalid type');
             clone = obj;
         }
         return clone;
@@ -26,5 +25,5 @@ class Clone {
         return obj !== null && !(obj instanceof Array) && typeof obj === 'object';
     }
 }
-exports.default = Clone;
+exports.CloneHelper = CloneHelper;
 //# sourceMappingURL=clone.js.map
