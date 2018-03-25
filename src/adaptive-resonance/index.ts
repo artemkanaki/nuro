@@ -42,19 +42,23 @@ export class BinaryAdaptiveResonance<T> {
   }
 
   public learn(data: T[]): Cluster<T>[] {
-    data.forEach(item => {
-      const closestCluster = this.getClosestCluster(item);
-      if (closestCluster) {
-        this.recalculateCluster(closestCluster, item);
-      } else {
-        const cluster = this.createCluster(item);
-        this.clusters.push(cluster);
-      }
-    });
+    data.forEach(item => this.clusterify(item));
     return this._clusters;
   }
 
-  private getClosestCluster(item): Cluster<T> {
+  public clusterify(item): Cluster<T> {
+    const closestCluster = this.getClosestCluster(item);
+    if (closestCluster) {
+      this.recalculateCluster(closestCluster, item);
+      return closestCluster;
+    } else {
+      const cluster = this.createCluster(item);
+      this.clusters.push(cluster);
+      return cluster;
+    }
+  }
+
+  public getClosestCluster(item): Cluster<T> {
     const winner: { similarity: number, cluster: Cluster<T> } = this
       ._clusters
       .map(cluster => ({ cluster, similarity: this.calcClustersQualitativeSimilarity(cluster, item) }))

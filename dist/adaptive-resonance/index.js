@@ -33,17 +33,20 @@ class BinaryAdaptiveResonance {
         return this._clusters;
     }
     learn(data) {
-        data.forEach(item => {
-            const closestCluster = this.getClosestCluster(item);
-            if (closestCluster) {
-                this.recalculateCluster(closestCluster, item);
-            }
-            else {
-                const cluster = this.createCluster(item);
-                this.clusters.push(cluster);
-            }
-        });
+        data.forEach(item => this.clusterify(item));
         return this._clusters;
+    }
+    clusterify(item) {
+        const closestCluster = this.getClosestCluster(item);
+        if (closestCluster) {
+            this.recalculateCluster(closestCluster, item);
+            return closestCluster;
+        }
+        else {
+            const cluster = this.createCluster(item);
+            this.clusters.push(cluster);
+            return cluster;
+        }
     }
     getClosestCluster(item) {
         const winner = this
