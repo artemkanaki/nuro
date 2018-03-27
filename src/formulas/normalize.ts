@@ -44,6 +44,7 @@ export class NormalizeHelper {
       const min = minMax[index][0];
       const max = minMax[index][1];
       if (min === max) {
+        // TODO: use custom logger instead of native, and allow disable logs
         console.warn(format(
           'All values in %s column are the same (`min` === `max`). All values in this column will be equal to 0.5',
           index,

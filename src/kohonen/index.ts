@@ -7,12 +7,15 @@ import { InputDataExpected, UnexpectedWorkFlow, InvalidInputData } from '../exce
 import { get, set } from 'lodash';
 import * as math from 'mathjs';
 
+type InputItem = number[];
+type Cluster = InputItem;
+
 // src: http://neuronus.com/theory/961-nejronnye-seti-kokhonena.html
 export class Kohonen {
-  private _data: number[][] = [];
+  private _data: InputItem[] = [];
   private _minMax: MinMax;
   private _normalized: number[][] = [];
-  private _clusters: number[][] = [];
+  private _clusters: Cluster[] = [];
 
   private _speed: number = .5;
   private _delta: number = -0.05;
@@ -20,7 +23,7 @@ export class Kohonen {
   private _iterations: number;
 
   /** Configures how fast neural network will learn. value should be less or equal to 1 and bigger than 0 */
-  public get speed() {
+  public get speed(): number {
     return this._speed;
   }
   /** Configures how fast neural network will learn. value should be less or equal to 1 and bigger than 0 */
@@ -29,7 +32,7 @@ export class Kohonen {
   }
 
   /** Configures how much will decrease in the next iteration. value should be less than 0 */
-  public get delta() {
+  public get delta(): number {
     return this._delta;
   }
   /** Configures how much will decrease in the next iteration. value should be less than 0 */
@@ -37,7 +40,7 @@ export class Kohonen {
     this._delta = value;
   }
 
-  public get range() {
+  public get range(): number {
     return this._range;
   }
   public set range(value) {
@@ -45,7 +48,7 @@ export class Kohonen {
   }
 
   /** Configures how many iterations will be when learning will be started */
-  public get iterations() {
+  public get iterations(): number {
     return this._iterations;
   }
   /** Configures how many iterations will be when learning will be started */
@@ -54,12 +57,12 @@ export class Kohonen {
   }
 
   /** Returns data which was set on `setData` call. */
-  public get data() {
+  public get data(): InputItem[] {
     return this._data;
   }
 
   /** Returns prepared clusters (normalized). */
-  public get clusters() {
+  public get clusters(): Cluster[] {
     return this._clusters;
   }
 
@@ -78,7 +81,7 @@ export class Kohonen {
   }
 
   /** Sets data which will be clusterized */
-  public setData(value: number[][]) {
+  public setData(value: InputItem[]): void {
     if (!(value instanceof Array)) {
       throw new InvalidInputData('argument `value` should be instance of Array');
     } else if (!value.length) {
@@ -90,7 +93,7 @@ export class Kohonen {
   }
 
   /** Preparing clusters */
-  public learn(): number[][] {
+  public learn(): Cluster[] {
     do {
       this.buildClusters();
       this.speed = math.chain(this.speed).add(this.delta).done();
@@ -102,7 +105,7 @@ export class Kohonen {
   }
 
   /** Returns closest cluster to specified item */
-  public clusterify(item: number[]) {
+  public clusterify(item: InputItem): Cluster {
     if (!this.clusters.length) {
       throw new UnexpectedWorkFlow('Clusters are not prepared yet');
     }
@@ -111,7 +114,7 @@ export class Kohonen {
   }
 
   /** Sets clusters (input data should not be denormalized, this operation will be done automatically) */
-  public setClusterStructure(structure: number[][]): number[][] {
+  public setClusterStructure(structure: Cluster[]): Cluster[] {
     if (!this._minMax) {
       throw new UnexpectedWorkFlow('First of all you should fill `data` field');
     }
@@ -120,11 +123,11 @@ export class Kohonen {
   }
 
   /** Returns prepared clusters (denormalized). */
-  public getDenormalizedClusters() {
+  public getDenormalizedClusters(): Cluster[] {
     return this._clusters.map(cluster => this.denormalizeHelper.denormalizeArray(cluster, this._minMax));
   }
 
-  private buildClusters(): number[][] {
+  private buildClusters(): Cluster[] {
     if (!this._normalized.length) {
       throw new InputDataExpected('First of all you should fill `data` field')
     }
@@ -144,7 +147,7 @@ export class Kohonen {
    * @param item - point for which the cluster is searching
    * @param range - max distance to cluster
    */
-  private getClosestCluster(item: number[], range?: number): number[] {
+  private getClosestCluster(item: InputItem, range?: number): Cluster {
     let closestDistance: number;
     return this._clusters.reduce((closest, candidate) => {
       const candidateDistance = this.euclideanHelper.getEuclideanDistanceFromArray(candidate, item);
@@ -163,7 +166,7 @@ export class Kohonen {
     }, null);
   }
 
-  private recalculateCluster(cluster: number[], item: number[]) {
+  private recalculateCluster(cluster: Cluster, item: InputItem): Cluster {
     for (let index = 0; index < cluster.length; index++) {
       const clusterValue = cluster[index];
       const itemValue = item[index];

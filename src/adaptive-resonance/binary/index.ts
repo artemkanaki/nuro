@@ -14,28 +14,28 @@ export class BinaryAdaptiveResonance {
   //#endregion
 
   //#region getters/setters
-  public get range() {
+  public get range(): number {
     return this._range;
   }
   public set range(val) {
     this._range = val;
   }
 
-  public get lambda() {
+  public get lambda(): number {
     return this._lambda;
   }
   public set lambda(val) {
     this._lambda = val;
   }
 
-  public get speed() {
+  public get speed(): number {
     return this._speed;
   }
   public set speed(val) {
     this._speed = val;
   }
 
-  public get clusters() {
+  public get clusters(): Cluster[] {
     return this._clusters;
   }
   //#endregion
@@ -86,7 +86,7 @@ export class BinaryAdaptiveResonance {
   //#endregion
 
   //#region private methods
-  private calcClustersQualitativeSimilarity(cluster: Cluster, item: InputItem) {
+  private calcClustersQualitativeSimilarity(cluster: Cluster, item: InputItem): number {
     return item
       .reduce(
         (total: mathjs.IMathJsChain, value, index) =>
@@ -96,7 +96,7 @@ export class BinaryAdaptiveResonance {
       .done();
   }
 
-  private calcClustersQuantitativeSimilarity(cluster: Cluster, item: InputItem) {
+  private calcClustersQuantitativeSimilarity(cluster: Cluster, item: InputItem): number {
     let itemSum = 0;
     let itemClusterSum = 0;
     item.forEach((value, index) => {
@@ -132,7 +132,7 @@ export class BinaryAdaptiveResonance {
       .done();
   }
 
-  private recalculateShortMemory(cluster: Cluster, item: InputItem, index: number) {
+  private recalculateShortMemory(cluster: Cluster, item: InputItem, index: number): number {
     const oldShortMemory = cluster[index][0];
     const newShortMemory = chain(1)
       .subtract(this.speed)
@@ -144,7 +144,7 @@ export class BinaryAdaptiveResonance {
     return newShortMemory;
   }
 
-  private recalculateLongMemory(cluster: Cluster, item: InputItem, index: number) {
+  private recalculateLongMemory(cluster: Cluster, item: InputItem, index: number): number {
     const oldLongMemory = cluster[index][1];
     const newLongMemory = chain(1)
       .subtract(this.speed)
@@ -156,7 +156,7 @@ export class BinaryAdaptiveResonance {
     return newLongMemory;
   }
 
-  private recalculateCluster(cluster: Cluster, item: InputItem) {
+  private recalculateCluster(cluster: Cluster, item: InputItem): Cluster {
     item.forEach((value, index) => {
       cluster[index][0] = this.recalculateShortMemory(cluster, item, index);
       cluster[index][1] = this.recalculateLongMemory(cluster, item, index);

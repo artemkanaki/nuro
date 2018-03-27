@@ -15,21 +15,21 @@ export class AnalogAdaptiveResonance {
   private _minMax: MinMax = [];
   private _normalizedVectors: number[][] = [];
 
-  public get range() {
+  public get range(): number {
     return this._range;
   }
   public set range(val) {
     this._range = val;
   }
 
-  public get speed() {
+  public get speed(): number {
     return this._speed;
   }
   public set speed(val) {
     this._speed = val;
   }
 
-  public get clusters() {
+  public get clusters(): Cluster[] {
     return this._clusters;
   }
   public set clusters(val) {
@@ -50,7 +50,7 @@ export class AnalogAdaptiveResonance {
     return this.learn([ item ])[0];
   }
 
-  public getClosestCluster(item: number[]) {
+  public getClosestCluster(item: number[]): Cluster {
     const vector = this.normalizeHelper.normalizeArray(item, this._minMax);
     const normalizedVector = this.normalizeHelper.getNormalizedVector(vector);
     return this.getClosestClusterForNormalizedVector(normalizedVector);
@@ -66,7 +66,7 @@ export class AnalogAdaptiveResonance {
     return normalizedVectors;
   }
 
-  private completeMinMax(candidateMinMax: MinMax) {
+  private completeMinMax(candidateMinMax: MinMax): MinMax {
     if (this._minMax.length) {
       for (let index = 0; index < this._minMax.length; index++) {
         const existsMinMaxItem = this._minMax[index];
@@ -80,7 +80,7 @@ export class AnalogAdaptiveResonance {
     return this._minMax;
   }
 
-  private buildClusters(vectors: number[][]) {
+  private buildClusters(vectors: number[][]): Cluster[] {
     vectors.map(vector => {
       const closestCluster = this.getClosestClusterForNormalizedVector(vector);
       if (closestCluster) {
@@ -92,7 +92,7 @@ export class AnalogAdaptiveResonance {
     return this.clusters;
   }
 
-  private getClosestClusterForNormalizedVector(vector: number[]) {
+  private getClosestClusterForNormalizedVector(vector: number[]): Cluster {
     let closestSimilarity;
     const closestCluster = this.clusters.reduce((closest, candidate) => {
       let total = chain(0);
@@ -111,7 +111,7 @@ export class AnalogAdaptiveResonance {
     return closestCluster;
   }
 
-  private recalculateCluster(cluster: number[], vector: number[]) {
+  private recalculateCluster(cluster: number[], vector: number[]): Cluster {
     for (let index = 0; index < cluster.length; index++) {
       // NOTICE: (1 - v) * w + v * x, w = cluster[index], x = vector[index], v = this.speed
       cluster[index] = chain(1)
