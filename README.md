@@ -1,7 +1,7 @@
 # nuro
 Library for usage different neuron networks and combine them.
 
-#Classes
+# Classes
 
 ## Kohonen
 
