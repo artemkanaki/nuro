@@ -1,7 +1,8 @@
 import { get, set } from 'lodash';
 import { chain } from 'mathjs';
-import { ClusterObject, Cluster, InputItem } from '../interfaces/adaptive-resonance';
 
+type InputItem = number[];
+type Cluster = [number, number][];
 
 // src: http://neuronus.com/theory/962-nejronnye-seti-adaptivnogo-rezonansa.html
 export class BinaryAdaptiveResonance {

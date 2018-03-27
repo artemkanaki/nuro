@@ -1,13 +1,13 @@
 import { set, get } from 'lodash';
-import * as math from 'mathjs';
+import { chain } from 'mathjs';
+import { CloneHelper } from '../helpers/clone';
 
 export class NormalizeHelper {
-  private _round: number = 10;
+  private cloneHelper = new CloneHelper();
 
   public standard(min: number, max: number, target: number): number {
     // (target) - min) / (max - min)
-    return math
-      .chain(target)
+    return chain(target)
       .subtract(min)
       .divide(
         math
@@ -20,8 +20,7 @@ export class NormalizeHelper {
 
   public extended(min: number, max: number, target: number): number {
     // 2 * ((target - min) / (max - min)) - 1
-    return math
-      .chain(2)
+    return chain(2)
       .multiply(this.standard(min, max, target))
       .subtract(1)
       .done();
@@ -48,5 +47,18 @@ export class NormalizeHelper {
       denormalized[index] = denormalize.call(this, min, max, value);
     });
     return denormalized;
+  }
+
+  public getNormalizedVector(vector: number[]): number[] {
+    const module = this.getVectorsModule(vector);
+    return this
+      .cloneHelper
+      .deepClone(vector)
+      .map((clone: number[]) => clone.map(val => chain(val).divide(module).done()));
+
+  }
+
+  public getVectorsModule(vector: number[]): number {
+    return vector.reduce((total, val) => total.add(chain(val).pow(2)), chain(0)).sqrt().done();
   }
 }
