@@ -7,8 +7,11 @@ const min_max_1 = require("../../formulas/min-max");
 const mathjs_1 = require("mathjs");
 class AnalogAdaptiveResonance {
     constructor() {
+        this._clusters = [];
         this._range = .5;
         this._speed = .5;
+        this._minMax = [];
+        this._normalizedVectors = [];
         this.cloneHelper = new clone_1.CloneHelper();
         this.normalizeHelper = new normalize_1.NormalizeHelper();
         this.denormalizeHelper = new denormalize_1.DenormalizeHelper();
@@ -34,10 +37,15 @@ class AnalogAdaptiveResonance {
     }
     learn(data) {
         const normalizedVectors = this.processInputData(data);
-        this.buildClusters(normalizedVectors);
+        return this.buildClusters(normalizedVectors);
     }
     clusterify(item) {
-        return this.learn([item]);
+        return this.learn([item])[0];
+    }
+    getClosestCluster(item) {
+        const vector = this.normalizeHelper.normalizeArray(item, this._minMax);
+        const normalizedVector = this.normalizeHelper.getNormalizedVector(vector);
+        return this.getClosestClusterForNormalizedVector(normalizedVector);
     }
     processInputData(data) {
         const candidateMinMax = this.minMaxHelper.getMinMaxFromArray(data);
@@ -48,7 +56,7 @@ class AnalogAdaptiveResonance {
         return normalizedVectors;
     }
     completeMinMax(candidateMinMax) {
-        if (this._minMax) {
+        if (this._minMax.length) {
             for (let index = 0; index < this._minMax.length; index++) {
                 const existsMinMaxItem = this._minMax[index];
                 const candidateMinMaxItem = candidateMinMax[index];
@@ -63,22 +71,22 @@ class AnalogAdaptiveResonance {
     }
     buildClusters(vectors) {
         vectors.map(vector => {
-            const closestCluster = this.getClosestCluster(vector);
+            const closestCluster = this.getClosestClusterForNormalizedVector(vector);
             if (closestCluster) {
                 this.recalculateCluster(closestCluster, vector);
             }
             else {
-                this._clusters.push(vector);
+                this.clusters.push(vector);
             }
         });
-        return this._clusters;
+        return this.clusters;
     }
-    getClosestCluster(vector) {
+    getClosestClusterForNormalizedVector(vector) {
         let closestSimilarity;
-        const closestCluster = this._clusters.reduce((closest, candidate) => {
-            const total = mathjs_1.chain(0);
+        const closestCluster = this.clusters.reduce((closest, candidate) => {
+            let total = mathjs_1.chain(0);
             for (let index = 0; index < vector.length; index++) {
-                total.add(mathjs_1.chain(candidate[index]).add(vector[index]).done());
+                total = total.add(mathjs_1.chain(candidate[index]).multiply(vector[index]).done());
             }
             const totalNumber = total.done();
             if ((!closestSimilarity && totalNumber >= this.range) || (totalNumber > closestSimilarity)) {
@@ -89,11 +97,10 @@ class AnalogAdaptiveResonance {
         }, null);
         return closestCluster;
     }
-    createCluster(vector) {
-    }
     recalculateCluster(cluster, vector) {
         for (let index = 0; index < cluster.length; index++) {
-            cluster[index] = mathjs_1.chain(1 - this.speed)
+            cluster[index] = mathjs_1.chain(1)
+                .subtract(this.speed)
                 .multiply(cluster[index])
                 .add(mathjs_1.chain(this.speed)
                 .multiply(vector[index])

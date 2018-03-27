@@ -1,6 +1,7 @@
 import { set, get } from 'lodash';
 import { chain } from 'mathjs';
 import { CloneHelper } from '../helpers/clone';
+import { format } from 'util';
 
 export class NormalizeHelper {
   private cloneHelper = new CloneHelper();
@@ -10,8 +11,7 @@ export class NormalizeHelper {
     return chain(target)
       .subtract(min)
       .divide(
-        math
-          .chain(max)
+        chain(max)
           .subtract(min)
           .done()
       )
@@ -43,8 +43,17 @@ export class NormalizeHelper {
     target.forEach((value, index) => {
       const min = minMax[index][0];
       const max = minMax[index][1];
+      if (min === max) {
+        console.warn(format(
+          'All values in %s column are the same (`min` === `max`). All values in this column will be equal to 0.5',
+          index,
+        ));
+        denormalized[index] = .5;
+        return;
+      }
       const denormalize = min < 0 ? this.extended : this.standard;
-      denormalized[index] = denormalize.call(this, min, max, value);
+      const denormalizedValue = denormalize.call(this, min, max, value);
+      denormalized[index] = denormalizedValue;
     });
     return denormalized;
   }
@@ -54,11 +63,10 @@ export class NormalizeHelper {
     return this
       .cloneHelper
       .deepClone(vector)
-      .map((clone: number[]) => clone.map(val => chain(val).divide(module).done()));
-
+      .map(val => chain(val).divide(module).done());
   }
 
   public getVectorsModule(vector: number[]): number {
-    return vector.reduce((total, val) => total.add(chain(val).pow(2)), chain(0)).sqrt().done();
+    return vector.reduce((total, val) => total.add(chain(val).pow(2).done()), chain(0)).sqrt().done();
   }
 }

@@ -7,6 +7,7 @@ import { InputDataExpected, UnexpectedWorkFlow, InvalidInputData } from '../exce
 import { get, set } from 'lodash';
 import * as math from 'mathjs';
 
+// src: http://neuronus.com/theory/961-nejronnye-seti-kokhonena.html
 export class Kohonen {
   private _data: number[][] = [];
   private _minMax: MinMax;
