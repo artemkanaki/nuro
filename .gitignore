@@ -3,3 +3,6 @@
 /backup
 **/coverage
 tests/unit
+
+/.vscode
+/_.vscode
