@@ -1,8 +1,5 @@
-import { EuclideanHelper } from '../formulas/euclidean';
-import { DenormalizeHelper } from '../formulas/denormalize';
-import { NormalizeHelper } from '../formulas/normalize';
-import { MinMax, MinMaxHelper } from '../formulas/min-max';
-import { CloneHelper } from '../helpers/clone';
+import { DenormalizeHelper, EuclideanHelper, MinMax, MinMaxHelper, NormalizeHelper } from '../formulas';
+import { CloneHelper } from '../helpers';
 import { InputDataExpected, UnexpectedWorkFlow, InvalidInputData } from '../exceptions';
 import { get, set } from 'lodash';
 import * as math from 'mathjs';

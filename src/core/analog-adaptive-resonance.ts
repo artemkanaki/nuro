@@ -1,7 +1,5 @@
-import { CloneHelper } from '../../helpers/clone';
-import { NormalizeHelper } from '../../formulas/normalize';
-import { DenormalizeHelper } from '../../formulas/denormalize';
-import { MinMaxHelper, MinMax } from '../../formulas/min-max';
+import { CloneHelper } from '../helpers';
+import { NormalizeHelper, DenormalizeHelper, MinMax, MinMaxHelper } from '../formulas';
 import { chain } from 'mathjs';
 
 type InputItem = number[];

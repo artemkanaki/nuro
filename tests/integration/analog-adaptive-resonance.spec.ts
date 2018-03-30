@@ -1,5 +1,5 @@
 import data from './data/analog-adaptive-resonance.data';
-import { AnalogAdaptiveResonance } from '../../src/adaptive-resonance/analog/index';
+import { AnalogAdaptiveResonance } from '../../src/core/';
 import { NormalizeHelper } from '../../src/formulas/normalize';
 
 describe('Basic flow', () => {
