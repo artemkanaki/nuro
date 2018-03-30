@@ -3,5 +3,6 @@
 /backup
 **/coverage
 tests/unit
+/dist
 
 /.vscode
