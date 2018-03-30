@@ -1,5 +1,5 @@
 import data from './data/binary-adaptive-resonance.data';
-import { BinaryAdaptiveResonance } from '../../src/adaptive-resonance/binary';
+import { BinaryAdaptiveResonance } from '../../src/core';
 
 describe('Binary array adaptive resonance', () => {
   it('should learn', () => {

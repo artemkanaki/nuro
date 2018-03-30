@@ -1,5 +1,5 @@
 import data from './data/kohonen';
-import { Kohonen } from '../../src/kohonen';
+import { Kohonen } from '../../src/core';
 import { InvalidInputData, InputDataExpected } from '../../src/exceptions';
 
 describe('Kohonen', () => {
