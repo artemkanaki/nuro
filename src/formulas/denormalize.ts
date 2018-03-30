@@ -2,7 +2,7 @@ import { get, set } from 'lodash';
 import { chain } from 'mathjs';
 
 export class DenormalizeHelper {
-  public standard(min: number, max: number, target: number) {
+  public standard(min: number, max: number, target: number): number {
     // (target * (max - min)) + min
     return chain(max)
       .subtract(min)
@@ -11,7 +11,7 @@ export class DenormalizeHelper {
       .done();
   }
 
-  public extended(min: number, max: number, target: number) {
+  public extended(min: number, max: number, target: number): number {
     return chain(target)
       .subtract(1)
       .multiply(2)

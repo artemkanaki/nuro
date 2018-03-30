@@ -3,6 +3,7 @@
     "Denormalize",
     "Kohonen",
     "clusterify",
-    "denormalized"
+    "denormalized",
+    "truthy"
   ]
 }

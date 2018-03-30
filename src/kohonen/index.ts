@@ -81,15 +81,15 @@ export class Kohonen {
   }
 
   /** Sets data which will be clusterized */
-  public setData(value: InputItem[]): void {
-    if (!(value instanceof Array)) {
-      throw new InvalidInputData('argument `value` should be instance of Array');
-    } else if (!value.length) {
-      throw new InvalidInputData('argument `value` should has at least one element')
+  public setData(items: InputItem[]): void {
+    if (!(items instanceof Array)) {
+      throw new InvalidInputData('argument `items` should be instance of Array');
+    } else if (!items.length) {
+      throw new InvalidInputData('argument `items` should has at least one element')
     }
-    this._data = this.cloneHelper.deepClone(value);
+    this._data = this.cloneHelper.deepClone(items);
     this._minMax = this.minMaxHelper.getMinMaxFromArray(this.data);
-    this._normalized = this._data.map(item => this.normalizeHelper.normalizeArray(item, this._minMax));
+    this._normalized = this.data.map(item => this.normalizeHelper.normalizeArray(item, this._minMax));
   }
 
   /** Preparing clusters */

@@ -51,16 +51,16 @@ class Kohonen {
     get clusters() {
         return this._clusters;
     }
-    setData(value) {
-        if (!(value instanceof Array)) {
-            throw new exceptions_1.InvalidInputData('argument `value` should be instance of Array');
+    setData(items) {
+        if (!(items instanceof Array)) {
+            throw new exceptions_1.InvalidInputData('argument `items` should be instance of Array');
         }
-        else if (!value.length) {
-            throw new exceptions_1.InvalidInputData('argument `value` should has at least one element');
+        else if (!items.length) {
+            throw new exceptions_1.InvalidInputData('argument `items` should has at least one element');
         }
-        this._data = this.cloneHelper.deepClone(value);
+        this._data = this.cloneHelper.deepClone(items);
         this._minMax = this.minMaxHelper.getMinMaxFromArray(this.data);
-        this._normalized = this._data.map(item => this.normalizeHelper.normalizeArray(item, this._minMax));
+        this._normalized = this.data.map(item => this.normalizeHelper.normalizeArray(item, this._minMax));
     }
     learn() {
         do {

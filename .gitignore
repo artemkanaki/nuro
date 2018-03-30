@@ -1,3 +1,6 @@
 /.history
 /node_modules
 /backup
+**/coverage
+
+tests/unit

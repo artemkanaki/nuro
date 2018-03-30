@@ -23,5 +23,20 @@
         "<node_internals>/**"
       ]
     },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest",
+      "program": "${workspaceRoot}/node_modules/jest/bin/jest",
+      "args": [
+          "--runInBand",
+          "--config",
+          "${workspaceRoot}/tests/jest.config.json"
+      ],
+      "sourceMaps": true,
+      "outFiles": [
+          "${workspaceRoot}/dist/**/*"
+      ]
+  }
   ]
 }
