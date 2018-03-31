@@ -1,31 +1,36 @@
-import { maxBy, head, get, set, minBy } from 'lodash';
-import { InvalidInputData } from '../exceptions'
+import BigNumber from 'bignumber.js';
 
 export type MinMax = [number, number][];
+
 export class MinMaxHelper {
-  getMinMaxConfig<T>(data: T[]): { [P in keyof T]: T[P] & { min: number, max: number } } {
-    const minMax: any = {};
-    if (!(data instanceof Array)) {
-      throw new InvalidInputData('`data` should be an array of objects');
+
+  getMinMax(data: BigNumber[][]): MinMax {
+    const minMax = [];
+
+    for (let index = 0; index < data[0].length; index++) {
+      const min = this.sortByInternalValue(data, index, false);
+      const max = this.sortByInternalValue(data, index, true);
+
+      minMax[index] = [ min, max ];
     }
-    Object.keys(head(data)).forEach(key => {
-      set(minMax, `${key}.max`, get(maxBy(data, item => get(item, key)), key));
-      set(minMax, `${key}.min`, get(minBy(data, item => get(item, key)), key));
-    });
+
     return minMax;
   }
 
-  getMinMaxFromArray(data: number[][]): MinMax {
-    const minMax = [];
-    if (!(data instanceof Array)) {
-      throw new InvalidInputData('`data` should be an array of number arrays');
-    }
-    for (let index = 0; index < data[0].length; index++) {
-      minMax[index] = [
-        minBy(data, item => item[index])[index],
-        maxBy(data, item => item[index])[index],
-      ];
-    }
-    return minMax;
+  private sortByInternalValue(data: BigNumber[][], index: number, asc: boolean) {
+    const sorted = data.sort((a, b) => {
+      const aValue = a[index];
+      const bValue = b[index];
+
+      if (aValue.isLessThan(bValue)) {
+        return asc ? 1 : -1;
+      } else if (aValue.isGreaterThan(bValue)) {
+        return asc ? -1 : 1;
+      }
+
+      return 0;
+    });
+
+    return sorted[0][index];
   }
 }

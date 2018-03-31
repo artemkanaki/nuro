@@ -49,16 +49,16 @@ export class AnalogAdaptiveResonance {
   }
 
   public getClosestCluster(item: number[]): Cluster {
-    const vector = this.normalizeHelper.normalizeArray(item, this._minMax);
+    const vector = this.normalizeHelper.normalize(item, this._minMax);
     const normalizedVector = this.normalizeHelper.getNormalizedVector(vector);
     return this.getClosestClusterForNormalizedVector(normalizedVector);
   }
 
   private processInputData(data: InputItem[]) {
-    const candidateMinMax = this.minMaxHelper.getMinMaxFromArray(data);
+    const candidateMinMax = this.minMaxHelper.getMinMax(data);
     this.completeMinMax(candidateMinMax);
 
-    const normalizedData = data.map(item => this.normalizeHelper.normalizeArray(item, this._minMax));
+    const normalizedData = data.map(item => this.normalizeHelper.normalize(item, this._minMax));
     const normalizedVectors = normalizedData.map(vector => this.normalizeHelper.getNormalizedVector(vector));
     this._normalizedVectors.push(...normalizedVectors);
     return normalizedVectors;

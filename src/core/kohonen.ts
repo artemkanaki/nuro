@@ -85,8 +85,8 @@ export class Kohonen {
       throw new InvalidInputData('argument `items` should has at least one element')
     }
     this._data = this.cloneHelper.deepClone(items);
-    this._minMax = this.minMaxHelper.getMinMaxFromArray(this.data);
-    this._normalized = this.data.map(item => this.normalizeHelper.normalizeArray(item, this._minMax));
+    this._minMax = this.minMaxHelper.getMinMax(this.data);
+    this._normalized = this.data.map(item => this.normalizeHelper.normalize(item, this._minMax));
   }
 
   /** Preparing clusters */
@@ -106,7 +106,7 @@ export class Kohonen {
     if (!this.clusters.length) {
       throw new UnexpectedWorkFlow('Clusters are not prepared yet');
     }
-    const normalized = this.normalizeHelper.normalizeArray(item, this._minMax);
+    const normalized = this.normalizeHelper.normalize(item, this._minMax);
     return this.getClosestCluster(normalized);
   }
 
@@ -115,13 +115,13 @@ export class Kohonen {
     if (!this._minMax) {
       throw new UnexpectedWorkFlow('First of all you should fill `data` field');
     }
-    this._clusters = structure.map(cluster => this.normalizeHelper.normalizeArray(cluster, this._minMax));
+    this._clusters = structure.map(cluster => this.normalizeHelper.normalize(cluster, this._minMax));
     return this._clusters;
   }
 
   /** Returns prepared clusters (denormalized). */
   public getDenormalizedClusters(): Cluster[] {
-    return this._clusters.map(cluster => this.denormalizeHelper.denormalizeArray(cluster, this._minMax));
+    return this._clusters.map(cluster => this.denormalizeHelper.denormalize(cluster, this._minMax));
   }
 
   private buildClusters(): Cluster[] {
@@ -147,7 +147,7 @@ export class Kohonen {
   private getClosestCluster(item: InputItem, range?: number): Cluster {
     let closestDistance: number;
     return this._clusters.reduce((closest, candidate) => {
-      const candidateDistance = this.euclideanHelper.getEuclideanDistanceFromArray(candidate, item);
+      const candidateDistance = this.euclideanHelper.getEuclideanDistance(candidate, item);
       if (
         (!closest && (!range || candidateDistance <= range))
         || (

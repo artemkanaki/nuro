@@ -1,45 +1,36 @@
-import { get, set } from 'lodash';
-import { chain } from 'mathjs';
+import BigNumber from 'bignumber.js';
 
 export class DenormalizeHelper {
-  public standard(min: number, max: number, target: number): number {
+
+  public standard(min: BigNumber, max: BigNumber, target: BigNumber): BigNumber {
     // (target * (max - min)) + min
-    return chain(max)
-      .subtract(min)
-      .multiply(target)
-      .add(min)
-      .done();
+    return max
+      .minus(min)
+      .multipliedBy(target)
+      .plus(min);
   }
 
-  public extended(min: number, max: number, target: number): number {
-    return chain(target)
-      .subtract(1)
-      .multiply(2)
-      .multiply(chain(max).subtract(min))
-      .subtract(min)
-      .done();
+  public extended(min: BigNumber, max: BigNumber, target: BigNumber): BigNumber {
+    return target
+      .minus(1)
+      .multipliedBy(2)
+      .multipliedBy(max.minus(min))
+      .minus(min);
   }
 
-  public denormalizeObject<T extends object>(target: T, minMax): T {
-    const denormalized = {} as T;
-    Object.keys(target).forEach(key => {
-      const value = get(target, key);
-      const min = get(minMax, key).min;
-      const max = get(minMax, key).max;
-      const denormalize = min < 0 ? this.extended : this.standard;
-      set(denormalized, key, denormalize.call(this, min, max, value));
-    });
-    return denormalized;
-  }
-
-  public denormalizeArray(target: number[], minMax: [number, number][]): number[] {
+  public denormalize(target: BigNumber[], minMax: [BigNumber, BigNumber][]): BigNumber[] {
     const denormalized = [];
+
     target.forEach((value, index) => {
       const min = minMax[index][0];
       const max = minMax[index][1];
-      const denormalize = min < 0 ? this.extended : this.standard;
+
+      const denormalize = min.isLessThan(0) ? this.extended : this.standard;
+
       denormalized[index] = denormalize.call(this, min, max, value);
     });
+
     return denormalized;
   }
+
 }
