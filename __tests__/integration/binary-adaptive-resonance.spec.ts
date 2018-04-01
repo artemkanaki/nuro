@@ -1,7 +1,7 @@
 import data from './data/binary-adaptive-resonance.data';
 import { BinaryAdaptiveResonance } from '../../src/core';
 import BigNumber from 'bignumber.js';
-import { convertDataToBigNumber, convertToNumberArray, convertToNumberArrayArray } from './helpers/bignumber-convertor';
+import { convertDataToBigNumber, convertToNumberArray } from './helpers/bignumber-convertor';
 
 describe('Binary array adaptive resonance', () => {
   let bigNumberData: BigNumber[][];

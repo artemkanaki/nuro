@@ -2,7 +2,7 @@ import data from './data/analog-adaptive-resonance.data';
 import { AnalogAdaptiveResonance } from '../../src/core/analog-adaptive-resonance';
 import { NormalizeHelper } from '../../src/formulas/normalize';
 import BigNumber from 'bignumber.js';
-import { convertDataToBigNumber, convertToNumberArray, convertToNumberArrayArray } from './helpers/bignumber-convertor';
+import { convertDataToBigNumber, convertToNumberArray } from './helpers/bignumber-convertor';
 
 describe('Basic flow', () => {
   let bigNumberData: BigNumber[][];

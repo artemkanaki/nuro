@@ -7,7 +7,3 @@ export function convertDataToBigNumber(data: number[][]) {
 export function convertToNumberArray(data: any[]) {
   return data.map(col => col instanceof Array ? convertToNumberArray(col) : col.toNumber());
 }
-
-export function convertToNumberArrayArray(data: BigNumber[][]) {
-  return data.map(row => convertToNumberArray(row));
-}

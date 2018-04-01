@@ -41,12 +41,63 @@ export class BinaryAdaptiveResonance {
   //#endregion
 
   //#region public methods
+
+  /**
+   * Prepares clusters based on input data
+   * 
+   * If clusters are already exists, then them will be extended or recalculated
+   * 
+   * @param data {InputItem[]} input data
+   * 
+   * @example
+   * const bar = new BinaryAdaptiveResonance();
+   * 
+   * aar.speed = new BigNumber(.5);
+   * aar.range = new BigNumber(.8);
+   * 
+   * const data: BigNumber[][] = [
+   *   [new BigNumber(0), new BigNumber(1)],
+   *   [new BigNumber(1), new BigNumber(0)],
+   *   ...
+   * ];
+   * 
+   * // clusters which was prepared on last `learn` call
+   * const clusters: BigNumber[][] = bar.learn(data);
+   * 
+   * ...
+   * 
+   * // clusters which were prepared on all `learn` calls
+   * aar.clusters;
+   */
   public learn(data: InputItem[]): Cluster[] {
     data.forEach(item => this.clusterify(item));
 
     return this._clusters;
   }
 
+  /**
+   * Finds, recalculate and return closest cluster, or create new one
+   * 
+   * @param item {InputItem} data which will be clusterify
+   * 
+   * @example
+   * 
+   * const bar = new AnalogAdaptiveResonance();
+   * bar.speed = new BigNumber(.5);
+   * bar.range = new BigNumber(.8);
+   * 
+   * const data: BigNumber[][] = [
+   *   [new BigNumber(1), new BigNumber(0), ...],
+   *   [new BigNumber(1), new BigNumber(1), ...]
+   * ];
+   * 
+   * aar.learn(data);
+   * 
+   * // cluster === aar.clusters[1]
+   * const cluster = aar.clusterify(
+   *   [new BigNumber(0), new BigNumber(1), ...]
+   * );
+   */
   public clusterify(item: InputItem): Cluster {
     const closestCluster = this.getClosestCluster(item);
 
@@ -63,6 +114,30 @@ export class BinaryAdaptiveResonance {
     }
   }
 
+  /**
+   * Finds and return closest cluster, or if input data are too different, then return null
+   * Instead of `clusterify` this method does not mutate cluster array
+   * 
+   * @param item {InputItem} data which will be clusterify
+   * 
+   * @example
+   * 
+   * const aar = new AnalogAdaptiveResonance();
+   * aar.speed = new BigNumber(.5);
+   * aar.range = new BigNumber(.8);
+   * 
+   * const data: BigNumber[][]= [
+   *   [new BigNumber(1), new BigNumber(0), ...],
+   *   [new BigNumber(0), new BigNumber(0), ...],
+   *   ...
+   * ];
+   * 
+   * aar.learn(data);
+   * 
+   * const cluster = aar.getClosestCluster(
+   *   [new BigNumber(0), new BigNumber(1), ...]
+   * );
+   */
   public getClosestCluster(item: InputItem): Cluster {
     const winner: { similarity: BigNumber, cluster: Cluster } = this
       ._clusters

@@ -12,7 +12,7 @@ export class EuclideanHelper {
       total = total.plus(
         from[index]
           .minus(to[index])
-          .pow(2),
+          .pow(2)
       );
     }
 
