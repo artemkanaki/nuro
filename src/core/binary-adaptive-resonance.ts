@@ -1,34 +1,34 @@
 import { get, set } from 'lodash';
-import { chain } from 'mathjs';
+import BigNumber from 'bignumber.js';
 
-type InputItem = number[];
-type Cluster = [number, number][];
+type InputItem = BigNumber[];
+type Cluster = [BigNumber, BigNumber][];
 
 // src: http://neuronus.com/theory/962-nejronnye-seti-adaptivnogo-rezonansa.html
 export class BinaryAdaptiveResonance {
   //#region props
   private _clusters: Cluster[] = [];
-  private _range: number = .6;
-  private _lambda: number = 2;
-  private _speed: number = .5;
+  private _range: BigNumber = new BigNumber(.6);
+  private _lambda: BigNumber = new BigNumber(2);
+  private _speed: BigNumber = new BigNumber(.5);
   //#endregion
 
   //#region getters/setters
-  public get range(): number {
+  public get range(): BigNumber {
     return this._range;
   }
   public set range(val) {
     this._range = val;
   }
 
-  public get lambda(): number {
+  public get lambda(): BigNumber {
     return this._lambda;
   }
   public set lambda(val) {
     this._lambda = val;
   }
 
-  public get speed(): number {
+  public get speed(): BigNumber {
     return this._speed;
   }
   public set speed(val) {
@@ -43,37 +43,44 @@ export class BinaryAdaptiveResonance {
   //#region public methods
   public learn(data: InputItem[]): Cluster[] {
     data.forEach(item => this.clusterify(item));
+
     return this._clusters;
   }
 
   public clusterify(item: InputItem): Cluster {
     const closestCluster = this.getClosestCluster(item);
+
     if (closestCluster) {
       this.recalculateCluster(closestCluster, item);
+
       return closestCluster;
     } else {
       const cluster = this.createCluster(item);
+
       this.clusters.push(cluster);
+
       return cluster;
     }
   }
 
   public getClosestCluster(item: InputItem): Cluster {
-    const winner: { similarity: number, cluster: Cluster } = this
+    const winner: { similarity: BigNumber, cluster: Cluster } = this
       ._clusters
       .map(cluster => ({ cluster, similarity: this.calcClustersQualitativeSimilarity(cluster, item) }))
       .filter(({ similarity }) => similarity >= this.range)
       .sort((a, b) => {
-        if (a.similarity > b.similarity) {
+        if (a.similarity.isGreaterThan(b.similarity)) {
           return -1;
-        } else if (a.similarity < b.similarity) {
+        } else if (a.similarity.isLessThan(b.similarity)) {
           return 1;
         }
+
         return 0;
       })
       .find(({ cluster }) => {
         const quantitativeSimilarity = this.calcClustersQuantitativeSimilarity(cluster, item);
-        if (quantitativeSimilarity > this._range) {
+
+        if (quantitativeSimilarity.isGreaterThan(this._range)) {
           return true;
         }
       });
@@ -81,86 +88,92 @@ export class BinaryAdaptiveResonance {
       if (winner) {
         return winner.cluster;
       }
+
       return null;
   }
   //#endregion
 
   //#region private methods
-  private calcClustersQualitativeSimilarity(cluster: Cluster, item: InputItem): number {
+  private calcClustersQualitativeSimilarity(cluster: Cluster, item: InputItem): BigNumber {
     return item
       .reduce(
-        (total: mathjs.IMathJsChain, value, index) =>
-          total.add(chain(cluster[index][0]).multiply(item[index]).done()),
-        chain(0),
-      )
-      .done();
+        (total: BigNumber, value, index) =>
+          total.plus(cluster[index][0].multipliedBy(item[index])),
+        new BigNumber(0),
+      );
   }
 
-  private calcClustersQuantitativeSimilarity(cluster: Cluster, item: InputItem): number {
-    let itemSum = 0;
-    let itemClusterSum = 0;
-    item.forEach((value, index) => {
+  private calcClustersQuantitativeSimilarity(cluster: Cluster, item: InputItem): BigNumber {
+    let itemSum = new BigNumber(0);
+    let itemClusterSum = new BigNumber(0);
+
+    for (let index = 0; index < cluster.length; index++) {
       const longMemory = cluster[index][1];
-      itemSum += value;
-      itemClusterSum += value * longMemory;
-    });
-    return chain(itemClusterSum).divide(itemSum).done();
+      const itemValue = item[index];
+
+      itemSum = itemSum.plus(itemValue);
+      itemClusterSum = itemClusterSum.plus(itemValue.multipliedBy(longMemory));
+    }
+
+    return itemClusterSum.div(itemSum);
   }
 
   private createCluster(item: InputItem): Cluster {
     const cluster: Cluster = [];
     item.forEach((value, index) => {
       const shortMemory = this.calculateShortMemory(item, index);
+
       cluster[index] = [shortMemory, value];
     });
     return cluster;
   }
 
-  private calculateShortMemory(item: InputItem, index: number): number {
-    return chain(this._lambda)
-      .multiply(item[index])
-      .divide(
-        chain(this._lambda)
-          .subtract(1)
-          .add(
-            item
-              .reduce((total: mathjs.IMathJsChain, value) => total.add(value), chain(0))
-              .done()
+  private calculateShortMemory(item: InputItem, index: number): BigNumber {
+    return this._lambda
+      .multipliedBy(item[index])
+      .div(
+        this._lambda
+          .minus(1)
+          .plus(
+            item.reduce((total: BigNumber, value) => total.plus(value), new BigNumber(0))
           )
-          .done()
-      )
-      .done();
+      );
   }
 
-  private recalculateShortMemory(cluster: Cluster, item: InputItem, index: number): number {
+  private recalculateShortMemory(cluster: Cluster, item: InputItem, index: number): BigNumber {
     const oldShortMemory = cluster[index][0];
-    const newShortMemory = chain(1)
-      .subtract(this.speed)
-      .multiply(oldShortMemory)
-      .add(
-        chain(this.speed).multiply(this.calculateShortMemory(item, index)).done()
-      )
-      .done();
+
+    const newShortMemory = new BigNumber(1)
+      .minus(this.speed)
+      .multipliedBy(oldShortMemory)
+      .plus(
+        this.speed.multipliedBy(this.calculateShortMemory(item, index))
+      );
+
     return newShortMemory;
   }
 
-  private recalculateLongMemory(cluster: Cluster, item: InputItem, index: number): number {
+  private recalculateLongMemory(cluster: Cluster, item: InputItem, index: number): BigNumber {
     const oldLongMemory = cluster[index][1];
-    const newLongMemory = chain(1)
-      .subtract(this.speed)
-      .multiply(oldLongMemory)
-      .add(
-        chain(this.speed).multiply(item[index]).done()
-      )
-      .done();
+
+    const newLongMemory = new BigNumber(1)
+      .minus(this.speed)
+      .multipliedBy(oldLongMemory)
+      .plus(
+        this.speed.multipliedBy(item[index])
+      );
+
     return newLongMemory;
   }
 
   private recalculateCluster(cluster: Cluster, item: InputItem): Cluster {
-    item.forEach((value, index) => {
+    for (let index = 0; index < cluster.length; index++) {
+      const itemValue = item[index];
+
       cluster[index][0] = this.recalculateShortMemory(cluster, item, index);
       cluster[index][1] = this.recalculateLongMemory(cluster, item, index);
-    });
+    }
+
     return cluster;
   }
   //#endregion

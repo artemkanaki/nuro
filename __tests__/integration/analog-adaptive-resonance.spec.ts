@@ -2,21 +2,14 @@ import data from './data/analog-adaptive-resonance.data';
 import { AnalogAdaptiveResonance } from '../../src/core/analog-adaptive-resonance';
 import { NormalizeHelper } from '../../src/formulas/normalize';
 import BigNumber from 'bignumber.js';
+import { convertDataToBigNumber, convertToNumberArray, convertToNumberArrayArray } from './helpers/bignumber-convertor';
 
 describe('Basic flow', () => {
   let bigNumberData: BigNumber[][];
 
   beforeEach(() => {
-    bigNumberData = data.map(row => row.map(col => new BigNumber(col)));
+    bigNumberData = convertDataToBigNumber(data);
   });
-
-  function convertToNumberArray(data: BigNumber[]) {
-    return data.map(col => col.toNumber());
-  }
-
-  function convertToNumberArrayArray(data: BigNumber[][]) {
-    return data.map(row => convertToNumberArray(row));
-  }
 
   it('should learn', () => {
     const aar = new AnalogAdaptiveResonance();
@@ -25,7 +18,7 @@ describe('Basic flow', () => {
 
     const got = aar.learn(bigNumberData);
 
-    expect(convertToNumberArrayArray(got)).toEqual([
+    expect(convertToNumberArray(got)).toEqual([
       [
         0.29526117275192837, 0.46853002020515067, 0.36664142284001316, 0.31658331727741396, 0.33959421293529624,
         0.37005135639883474, 0.29434558166344, 0.1360871392372763
