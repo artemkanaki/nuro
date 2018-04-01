@@ -52,8 +52,8 @@ export class BinaryAdaptiveResonance {
    * @example
    * const bar = new BinaryAdaptiveResonance();
    * 
-   * aar.speed = new BigNumber(.5);
-   * aar.range = new BigNumber(.8);
+   * bar.speed = new BigNumber(.5);
+   * bar.range = new BigNumber(.8);
    * 
    * const data: BigNumber[][] = [
    *   [new BigNumber(0), new BigNumber(1)],
@@ -67,7 +67,7 @@ export class BinaryAdaptiveResonance {
    * ...
    * 
    * // clusters which were prepared on all `learn` calls
-   * aar.clusters;
+   * bar.clusters;
    */
   public learn(data: InputItem[]): Cluster[] {
     data.forEach(item => this.clusterify(item));
@@ -91,10 +91,10 @@ export class BinaryAdaptiveResonance {
    *   [new BigNumber(1), new BigNumber(1), ...]
    * ];
    * 
-   * aar.learn(data);
+   * bar.learn(data);
    * 
-   * // cluster === aar.clusters[1]
-   * const cluster = aar.clusterify(
+   * // cluster === bar.clusters[1]
+   * const cluster = bar.clusterify(
    *   [new BigNumber(0), new BigNumber(1), ...]
    * );
    */
@@ -122,9 +122,9 @@ export class BinaryAdaptiveResonance {
    * 
    * @example
    * 
-   * const aar = new AnalogAdaptiveResonance();
-   * aar.speed = new BigNumber(.5);
-   * aar.range = new BigNumber(.8);
+   * const bar = new AnalogAdaptiveResonance();
+   * bar.speed = new BigNumber(.5);
+   * bar.range = new BigNumber(.8);
    * 
    * const data: BigNumber[][]= [
    *   [new BigNumber(1), new BigNumber(0), ...],
@@ -132,9 +132,9 @@ export class BinaryAdaptiveResonance {
    *   ...
    * ];
    * 
-   * aar.learn(data);
+   * bar.learn(data);
    * 
-   * const cluster = aar.getClosestCluster(
+   * const cluster = bar.getClosestCluster(
    *   [new BigNumber(0), new BigNumber(1), ...]
    * );
    */

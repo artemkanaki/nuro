@@ -24,7 +24,7 @@
     "typescript": "^2.8.1"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jest tests --config ./tests/jest.config.json",
+    "test": "./node_modules/.bin/jest tests --config ./__tests__/jest.config.json",
     "test:integration": "./node_modules/.bin/jest tests/integration --config ./tests/jest.config.json"
   },
   "repository": {
