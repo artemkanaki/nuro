@@ -1,14 +1,21 @@
 import data from './data/analog-adaptive-resonance.data';
-import { AnalogAdaptiveResonance } from '../../src/core/';
+import { AnalogAdaptiveResonance } from '../../src/core/analog-adaptive-resonance';
 import { NormalizeHelper } from '../../src/formulas/normalize';
+import BigNumber from 'bignumber.js';
 
 describe('Basic flow', () => {
+  let bigNumberData: BigNumber[][];
+
+  beforeEach(() => {
+    bigNumberData = data.map(row => row.map(col => new BigNumber(col)));
+  });
+
   it('should learn', () => {
     const aar = new AnalogAdaptiveResonance();
-    aar.speed = .5;
-    aar.range = .8;
+    aar.speed = new BigNumber(.5);
+    aar.range = new BigNumber(.8);
 
-    const got = aar.learn(data);
+    const got = aar.learn(bigNumberData);
 
     expect(got).toEqual([
       [
@@ -27,25 +34,25 @@ describe('Basic flow', () => {
 
   it('should re-learn', () => {
     const aar = new AnalogAdaptiveResonance();
-    aar.speed = .5;
-    aar.range = .8;
+    aar.speed = new BigNumber(.5);
+    aar.range = new BigNumber(.8);
 
     for (let i = 1; i < 10; i++) {
-      const got = aar.learn(data);
+      const got = aar.learn(bigNumberData);
 
       expect(Array.isArray(got)).toBeTruthy();
       expect(got.length).toBeGreaterThan(0);
 
-      expect((aar as any)._normalizedVectors.length).toEqual(data.length * i);
+      expect((aar as any)._normalizedVectors.length).toEqual(bigNumberData.length * i);
     }
   });
 
   it('should clusterify', () => {
     const aar = new AnalogAdaptiveResonance();
-    aar.speed = .5;
-    aar.range = .8;
+    aar.speed = new BigNumber(.5);
+    aar.range = new BigNumber(.8);
     
-    const got = aar.clusterify(data[0]);
+    const got = aar.clusterify(bigNumberData[0]);
 
     expect(aar.clusters.length).toEqual(1);
 
@@ -60,11 +67,12 @@ describe('Basic flow', () => {
 
   it('should clusterify (extended)', () => {
     const aar = new AnalogAdaptiveResonance();
-    aar.speed = .5;
-    aar.range = .8;
-    aar.learn(data);
+    aar.speed = new BigNumber(.5);
+    aar.range = new BigNumber(.8);
+
+    aar.learn(bigNumberData);
     
-    const got = aar.clusterify(data[0]);
+    const got = aar.clusterify(bigNumberData[0]);
 
     expect(aar.clusters.length).toEqual(3);
     expect(got).toEqual(
@@ -77,11 +85,11 @@ describe('Basic flow', () => {
 
   it('should re-clusterify', () => {
     const aar = new AnalogAdaptiveResonance();
-    aar.speed = .5;
-    aar.range = .8;
+    aar.speed = new BigNumber(.5);
+    aar.range = new BigNumber(.8);
     
     for (let i = 1; i < 10; i++) {
-      const got = aar.clusterify(data[0]);
+      const got = aar.clusterify(bigNumberData[0]);
   
       expect(Array.isArray(got)).toBeTruthy();
       expect(aar.clusters.length).toEqual(1);
@@ -90,12 +98,13 @@ describe('Basic flow', () => {
 
   it('should re-clusterify (extended)', () => {
     const aar = new AnalogAdaptiveResonance();
-    aar.speed = .5;
-    aar.range = .8;
-    aar.learn(data);
+    aar.speed = new BigNumber(.5);
+    aar.range = new BigNumber(.8);
+
+    aar.learn(bigNumberData);
     
     for (let i = 1; i < 10; i++) {
-      const got = aar.clusterify(data[0]);
+      const got = aar.clusterify(bigNumberData[0]);
   
       expect(Array.isArray(got)).toBeTruthy();
       expect(aar.clusters.length).toEqual(3);
@@ -104,12 +113,13 @@ describe('Basic flow', () => {
 
   it('should get closest cluster', () => {
     const aar = new AnalogAdaptiveResonance();
-    aar.speed = .5;
-    aar.range = .8;
-    aar.learn(data);
+    aar.speed = new BigNumber(.5);
+    aar.range = new BigNumber(.8);
+
+    aar.learn(bigNumberData);
 
     const clusterCount = aar.clusters.length;
-    const got = aar.getClosestCluster(data[0]);
+    const got = aar.getClosestCluster(bigNumberData[0]);
 
     expect(got).toEqual(
       [
@@ -118,6 +128,6 @@ describe('Basic flow', () => {
       ]
     );
     expect(clusterCount).toEqual(aar.clusters.length);
-    expect((aar as any)._normalizedVectors.length).toEqual(data.length);
+    expect((aar as any)._normalizedVectors.length).toEqual(bigNumberData.length);
   });
 });
