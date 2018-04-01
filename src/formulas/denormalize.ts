@@ -19,7 +19,7 @@ export class DenormalizeHelper {
   }
 
   public denormalize(target: BigNumber[], minMax: [BigNumber, BigNumber][]): BigNumber[] {
-    const denormalized = [];
+    const denormalized: BigNumber[] = [];
 
     target.forEach((value, index) => {
       const min = minMax[index][0];

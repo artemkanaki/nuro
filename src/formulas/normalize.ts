@@ -17,14 +17,13 @@ export class NormalizeHelper {
 
   public extended(min: BigNumber, max: BigNumber, target: BigNumber): BigNumber {
     // 2 * ((target - min) / (max - min)) - 1
-    return this
-      .standard(min, max, target)
-      .multipliedBy(2)
+    return new BigNumber(2)
+      .multipliedBy(this.standard(min, max, target))
       .minus(1);
   }
 
-  public normalize(target: BigNumber[], minMax: [BigNumber, BigNumber][]): number[] {
-    const denormalized = [];
+  public normalize(target: BigNumber[], minMax: [BigNumber, BigNumber][]): BigNumber[] {
+    const normalized: BigNumber[] = [];
 
     target.forEach((value, index) => {
       const min = minMax[index][0];
@@ -38,19 +37,19 @@ export class NormalizeHelper {
           ));
         }
 
-        denormalized[index] = .5;
+        normalized[index] = new BigNumber(.5);
 
         return;
       }
 
-      const denormalize = min.isLessThan(0) ? this.extended : this.standard;
+      const normalize = min.isLessThan(0) ? this.extended : this.standard;
 
-      const denormalizedValue = denormalize.call(this, min, max, value);
+      const normalizedValue = normalize.call(this, min, max, value);
 
-      denormalized[index] = denormalizedValue;
+      normalized[index] = normalizedValue;
     });
 
-    return denormalized;
+    return normalized;
   }
 
   public getNormalizedVector(vector: BigNumber[]): BigNumber[] {
@@ -63,9 +62,11 @@ export class NormalizeHelper {
   }
 
   public getVectorsModule(vector: BigNumber[]): BigNumber {
-    return vector.reduce(
-      (total: BigNumber, val) => total.plus(val),
-      new BigNumber(0)
-    );
+    return vector
+      .reduce(
+        (total: BigNumber, val) => total.plus(val.pow(2)),
+        new BigNumber(0)
+      )
+      .sqrt();
   }
 }

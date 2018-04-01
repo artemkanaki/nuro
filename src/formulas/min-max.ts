@@ -1,36 +1,25 @@
 import BigNumber from 'bignumber.js';
+import { CloneHelper } from '../helpers';
+import { minBy, maxBy } from 'lodash';
 
-export type MinMax = [number, number][];
+export type MinMax = [BigNumber, BigNumber][];
 
 export class MinMaxHelper {
+  private cloneHelper = new CloneHelper();
 
+  // NOTICE: works great after refactoring
   getMinMax(data: BigNumber[][]): MinMax {
-    const minMax = [];
+    const dataClone = this.cloneHelper.deepClone(data);
+
+    const minMax: MinMax = [];
 
     for (let index = 0; index < data[0].length; index++) {
-      const min = this.sortByInternalValue(data, index, false);
-      const max = this.sortByInternalValue(data, index, true);
+      const min = minBy(data, val => val[index].toNumber())[index];
+      const max = maxBy(data, val => val[index].toNumber())[index];
 
       minMax[index] = [ min, max ];
     }
 
     return minMax;
-  }
-
-  private sortByInternalValue(data: BigNumber[][], index: number, asc: boolean) {
-    const sorted = data.sort((a, b) => {
-      const aValue = a[index];
-      const bValue = b[index];
-
-      if (aValue.isLessThan(bValue)) {
-        return asc ? 1 : -1;
-      } else if (aValue.isGreaterThan(bValue)) {
-        return asc ? -1 : 1;
-      }
-
-      return 0;
-    });
-
-    return sorted[0][index];
   }
 }

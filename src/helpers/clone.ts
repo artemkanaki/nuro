@@ -1,6 +1,6 @@
 export class CloneHelper {
   public deepClone(obj: any): any {
-    let clone;
+    let clone: any;
 
     if (this.isValidObject(obj)) {
       clone = {};
@@ -20,7 +20,7 @@ export class CloneHelper {
     return clone;
   }
 
-  private isValidObject(obj) {
+  private isValidObject(obj: any) {
     // NOTICE: `obj.constructor.name === 'Object'` excludes classes, arrays and functions
     return obj !== null && obj.constructor.name === 'Object';
   }

@@ -1,19 +1,20 @@
 {
   "compilerOptions": {
-      "module": "commonjs",
-      "target": "esNEXT",
-      "noImplicitAny": true,
-      "removeComments": true,
-      "preserveConstEnums": true,
-      "outDir": "./dist",
-      "sourceMap": true
+    "module": "commonjs",
+    "target": "esnext",
+    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "outDir": "./dist",
+    "sourceMap": true,
+    "noImplicitUseStrict": false,
+    "removeComments": true,
+    "disableSizeLimit": true
   },
   "include": [
-      "src/**/*",
-      "__src__/**/*"
+    "src/**/*"
   ],
   "exclude": [
-      "node_modules",
-      "**/*.spec.ts"
+    "node_modules",
+    "**/*.spec.ts"
   ]
 }

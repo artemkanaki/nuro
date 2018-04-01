@@ -2,7 +2,7 @@ export class InvalidInputData extends Error {
   public code: string;
   public details: string;
 
-  constructor(details, ...args) {
+  constructor(details: string, ...args: any[]) {
     super(...args);
     this.code = 'InvalidInputData';
     this.details = details;
@@ -14,7 +14,7 @@ export class InputDataExpected extends Error {
   public code: string;
   public details: string;
 
-  constructor(details, ...args) {
+  constructor(details: string, ...args: any[]) {
     super(...args);
     this.code = 'InputDataExpected';
     this.details = details;
@@ -26,7 +26,7 @@ export class UnexpectedWorkFlow extends Error {
   public code: string;
   public details: string;
 
-  constructor(details, ...args) {
+  constructor(details: string, ...args: any[]) {
     super(...args);
     this.code = 'UnexpectedWorkFlow';
     this.details = details;
